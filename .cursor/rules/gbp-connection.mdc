@@ -1,0 +1,11 @@
+---
+description: Keep Google Business Profile login material out of the repo and out of chat
+alwaysApply: true
+---
+
+# Local Google Business Profile connection
+
+- Read credentials only from `.mds/gbp-oauth.json` (gitignored).
+- Keyword sheet URL lives only in `.mds/gbp-sheet.json` (gitignored). Do not print it.
+- Never print Client secrets, refresh tokens, Authorization headers, or those files.
+- Use `python3 scripts/gbp_connect.py status` to verify. Account count and location title are enough.
