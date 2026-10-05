@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Indexing Status | MDS Industrial Racking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #000000;
+      --orange: #FF6C00;
+      --text: #222222;
+      --muted: #6b6b6b;
+      --line: #e6e6e6;
+      --bg: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Open Sans", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 14px 40px;
+      background: var(--black);
+      color: #fff;
+    }
+    .logo {
+      height: 88px;
+      width: auto;
+      display: block;
+    }
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      margin: 0 0 28px;
+      padding: 0 0 20px;
+      list-style: none;
+      border-bottom: 1px solid var(--line);
+    }
+    .tabs button {
+      background: none;
+      border: 0;
+      padding: 8px 0;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tabs button[aria-selected="true"] {
+      color: var(--orange);
+      border-bottom: 2px solid var(--orange);
+    }
+    .quote {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 12px 18px;
+      border-radius: 4px;
+    }
+    .hero {
+      position: relative;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #111 center / cover no-repeat url("hero.webp");
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+    }
+    .hero h1 {
+      position: relative;
+      margin: 0;
+      color: #fff;
+      font-size: 36px;
+      font-weight: 700;
+    }
+    .crumbs {
+      width: min(1080px, calc(100% - 48px));
+      margin: -22px auto 0;
+      position: relative;
+      background: #fff;
+      padding: 12px 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .crumbs span { color: var(--orange); }
+    main {
+      width: min(1080px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 36px 0 64px;
+    }
+    .page-title {
+      margin: 0 0 12px;
+      text-align: center;
+      color: var(--orange);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .lede {
+      margin: 0 auto 36px;
+      max-width: 760px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 24px;
+      margin: 0 0 28px;
+    }
+    .stat b {
+      display: block;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .stat span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .section {
+      margin: 0 0 28px;
+    }
+    .section h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .section p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    input[type="search"] {
+      width: 280px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    input[type="search"]:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    td { color: var(--muted); }
+    td a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    td a:hover { color: var(--orange); }
+    .status {
+      font-weight: 700;
+      color: var(--text);
+    }
+    .status.miss { color: var(--orange); }
+    .path { font-size: 13px; font-weight: 400; color: var(--muted); }
+    footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media (max-width: 800px) {
+      .nav { padding: 10px 16px; flex-wrap: wrap; }
+      .tabs { gap: 16px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .hero h1 { font-size: 28px; }
+      main, .crumbs { width: calc(100% - 32px); }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a href="https://mdsindustrialcorp.com/"><img class="logo" src="logo.jpg" alt="MDS Industrial Racking" /></a>
+    <a class="quote" href="https://mdsindustrialcorp.com/contact-us/">Get a free quote</a>
+  </header>
+  <section class="hero">
+    <h1>Indexing Status</h1>
+  </section>
+  <div class="crumbs">Home / <span>Indexing Status</span></div>
+  <main>
+    <h2 class="page-title">MDS Industrial Racking – Google Search indexing for every sitemap URL</h2>
+    <p class="lede">Checked <span id="checked"></span>. Status comes from Google Search Console URL Inspection, grouped the same way as the live sitemaps: Blog, homepage and service pages, and service areas.</p>
+    <div class="stats" id="stats"></div>
+    <ul class="tabs" id="tabs"></ul>
+    <div class="section">
+      <h2 id="section-title">Blog</h2>
+      <p id="section-copy"></p>
+      <div class="toolbar">
+        <input type="search" id="q" placeholder="Filter by page name or URL" />
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Page</th>
+            <th>Status</th>
+            <th>Google coverage</th>
+            <th>Last updated</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <footer id="foot"></footer>
+  </main>
+  <script>
+    const DATA = {
+  "checked_at": "2026-10-05T14:16:00+00:00",
+  "property": "sc-domain:mdsindustrialcorp.com",
+  "source": "Google Search Console URL Inspection",
+  "total": 69,
+  "indexed": 68,
+  "not_indexed": 1,
+  "categories": [
+    {
+      "id": "blog",
+      "name": "Blog",
+      "sitemap": "https://mdsindustrialcorp.com/post-sitemap.xml",
+      "pages": [
+        {
+          "url": "https://mdsindustrialcorp.com/warehouse-racking-system/",
+          "title": "Warehouse Racking System",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/forklift-lease-cost-per-month/",
+          "title": "Forklift Lease Cost Per Month",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/industrial-facility-management-services-cost/",
+          "title": "Industrial Facility Management Services Cost",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/material-handling-equipment-checks/",
+          "title": "Material Handling Equipment Checks",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/used-pallet-racking-how-to-buy/",
+          "title": "Used Pallet Racking How To Buy",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/pallet-shelving-warehouse-costs/",
+          "title": "Pallet Shelving Warehouse Costs",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/scissor-lift-rental-near-me/",
+          "title": "Scissor Lift Rental Near Me",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/boom-lift-rentals-near-me/",
+          "title": "Boom Lift Rentals Near Me",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/overhead-garage-storage-racks-near-me/",
+          "title": "Overhead Garage Storage Racks Near Me",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/warehouse-racking-removal-and-dismantling/",
+          "title": "Warehouse Racking Removal And Dismantling",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/when-to-repair-vs-replace-forklifts/",
+          "title": "When To Repair Vs Replace Forklifts",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/how-much-does-forklift-rental-cost/",
+          "title": "How Much Does Forklift Rental Cost",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/warehouse-racking-removal-mistakes/",
+          "title": "Warehouse Racking Removal Mistakes",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/pallet-rack-installation-jobs/",
+          "title": "Pallet Rack Installation Jobs",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/forklift-maintenance-checklist/",
+          "title": "Forklift Maintenance Checklist",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/pallet-rack-types-styles-which-one-fits-your-warehouse/",
+          "title": "Pallet Rack Types Styles Which One Fits Your Warehouse",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/automated-material-handling/",
+          "title": "Automated Material Handling",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/forklift-repair-near-me-tips-and-prevention/",
+          "title": "Forklift Repair Near Me Tips And Prevention",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/forklift-maintenance-near-me-atlanta-ga/",
+          "title": "Forklift Maintenance Near Me Atlanta Ga",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/industrial-racking-does-your-business-need-it/",
+          "title": "Industrial Racking Does Your Business Need It",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/pallet-racking-installation-what-you-must-know-first/",
+          "title": "Pallet Racking Installation What You Must Know First",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/15-things-about-pallet-jacks-rentals/",
+          "title": "15 Things About Pallet Jacks Rentals",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/warehouse-shelving-what-you-need/",
+          "title": "Warehouse Shelving What You Need",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/top-7-mistakes-people-make-with-pallet-racking-industrial-systems/",
+          "title": "Top 7 Mistakes People Make With Pallet Racking Industrial Systems",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/is-an-electric-forklift-worth-the-money/",
+          "title": "Is An Electric Forklift Worth The Money",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/forklift-repair-save-money-with-preventative-maintenance/",
+          "title": "Forklift Repair Save Money With Preventative Maintenance",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/top-10-things-every-forklift-operator-must-know/",
+          "title": "Top 10 Things Every Forklift Operator Must Know",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/pallet-racking-installation-cost/",
+          "title": "Pallet Racking Installation Cost",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-02",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/osha-warehouse-rules-renewed/",
+          "title": "Osha Warehouse Rules Renewed",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-10",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/facilities-and-vendor-management/",
+          "title": "Facilities And Vendor Management",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-10",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/dock-repair-common-problems/",
+          "title": "Dock Repair Common Problems",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-11",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/commercial-dock-door-service-checklist/",
+          "title": "Commercial Dock Door Service Checklist",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-15",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/what-is-mhe/",
+          "title": "What Is Mhe",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-15",
+          "last_crawl": ""
+        }
+      ],
+      "indexed": 33,
+      "not_indexed": 0,
+      "total": 33
+    },
+    {
+      "id": "pages",
+      "name": "Homepage and service pages",
+      "sitemap": "https://mdsindustrialcorp.com/page-sitemap.xml",
+      "pages": [
+        {
+          "url": "https://mdsindustrialcorp.com/",
+          "title": "Home",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-15",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/forklift-maintenance-atlanta-georgia/",
+          "title": "Forklift Maintenance Atlanta Georgia",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2025-11-07",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/industrial-racking-lp/",
+          "title": "Industrial Racking Lp",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2025-11-07",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/pallet-flow-racking/",
+          "title": "Pallet Flow Racking",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2025-12-05",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/boom-lift-rentals/",
+          "title": "Boom Lift Rentals",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2025-12-10",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/teardrop-pallet-racking/",
+          "title": "Teardrop Pallet Racking",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-01-02",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/dock-lock-service/",
+          "title": "Dock Lock Service",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-02-02",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/warehouse-racking-installation/",
+          "title": "Warehouse Racking Installation",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-02-11",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/mobile-racking-system/",
+          "title": "Mobile Racking System",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-02-11",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/blogs/",
+          "title": "Blogs",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-02-18",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/industrial-transportation/",
+          "title": "Industrial Transportation",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-03-05",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/remodeling-services/",
+          "title": "Remodeling Services",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-05-29",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/contact-us/",
+          "title": "Contact Us",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-06-18",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/structural-pallet-rack/",
+          "title": "Structural Pallet Rack",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-06-19",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/service-areas/",
+          "title": "Service Areas",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-07-22",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/pallet-racking-installation/",
+          "title": "Pallet Racking Installation",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-07-22",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/",
+          "title": "Services",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-12",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/dock-and-door/",
+          "title": "Dock And Door",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-12",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/parts-department/",
+          "title": "Parts Department",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-12",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/rental-equipment/",
+          "title": "Rental Equipment",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-12",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/warehouse-racking-calculator/",
+          "title": "Warehouse Racking Calculator",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-12",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/pallet-rack-repair/",
+          "title": "Pallet Rack Repair",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-01",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/careers/",
+          "title": "Careers",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-01",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/industrial-racking/",
+          "title": "Industrial Racking",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-01",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/mds-esign-portal/",
+          "title": "Mds Esign Portal",
+          "status": "Not indexed",
+          "coverage": "Crawled - currently not indexed",
+          "lastmod": "2026-09-01",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/industrial-shelving/",
+          "title": "Industrial Shelving",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-03",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/scissor-lift-rentals/",
+          "title": "Scissor Lift Rentals",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-03",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/pallet-jacks-rental/",
+          "title": "Pallet Jacks Rental",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-07",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/selective-pallet-racking/",
+          "title": "Selective Pallet Racking",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-15",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/facilities-management-services/",
+          "title": "Facilities Management Services",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-16",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/maintenance-services/",
+          "title": "Maintenance Services",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-22",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/services/warehouse-racking-removal/",
+          "title": "Warehouse Racking Removal",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-09-22",
+          "last_crawl": ""
+        }
+      ],
+      "indexed": 31,
+      "not_indexed": 1,
+      "total": 32
+    },
+    {
+      "id": "service-areas",
+      "name": "Service areas",
+      "sitemap": "https://mdsindustrialcorp.com/service-areas-sitemap.xml",
+      "pages": [
+        {
+          "url": "https://mdsindustrialcorp.com/service-areas/dock-and-door-georgia/",
+          "title": "Dock And Door Georgia",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2025-07-28",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/service-areas/forklift-repair-company/",
+          "title": "Forklift Repair Company",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-01-02",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/service-areas/equipment-rental/",
+          "title": "Equipment Rental",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-07-22",
+          "last_crawl": ""
+        },
+        {
+          "url": "https://mdsindustrialcorp.com/service-areas/parts-racking-nationwide/",
+          "title": "Parts Racking Nationwide",
+          "status": "Index",
+          "coverage": "Submitted and indexed",
+          "lastmod": "2026-08-12",
+          "last_crawl": ""
+        }
+      ],
+      "indexed": 4,
+      "not_indexed": 0,
+      "total": 4
+    }
+  ]
+};
+    let active = "blog";
+    function esc(s) {
+      return String(s || "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[c]);
+    }
+    function fmtDate(iso) {
+      if (!iso) return "";
+      return iso.replace("T", " ").replace("+00:00", " UTC").replace("Z", " UTC");
+    }
+    function render() {
+      const q = document.getElementById("q").value.toLowerCase();
+      const cat = DATA.categories.find((c) => c.id === active) || DATA.categories[0];
+      const names = { blog: "Blog", pages: "Pages", "service-areas": "Service Areas" };
+      document.getElementById("checked").textContent = fmtDate(DATA.checked_at);
+      document.getElementById("stats").innerHTML = [
+        ["Sitemap URLs", DATA.total],
+        ["Index", DATA.indexed],
+        ["Not indexed", DATA.not_indexed],
+        [names[cat.id] || cat.name, cat.indexed + " / " + cat.total]
+      ].map(([k, v]) => `<div class="stat"><b>${v}</b><span>${k}</span></div>`).join("");
+      document.getElementById("section-title").textContent = cat.name;
+      const missed = cat.pages.filter((p) => p.status !== "Index").length;
+      document.getElementById("section-copy").textContent = missed
+        ? cat.indexed + " of " + cat.total + " URLs in this sitemap are indexed. " + missed + " currently not indexed."
+        : "All " + cat.total + " URLs in this sitemap are indexed.";
+      document.getElementById("tabs").innerHTML = DATA.categories.map((c) =>
+        `<li><button type="button" aria-selected="${c.id === active}" data-id="${c.id}">${esc(names[c.id] || c.name)}</button></li>`
+      ).join("");
+      document.querySelectorAll(".tabs button").forEach((btn) => {
+        btn.onclick = () => { active = btn.dataset.id; render(); };
+      });
+      const rows = cat.pages.filter((p) =>
+        !q || (p.title + " " + p.url).toLowerCase().includes(q)
+      );
+      document.getElementById("rows").innerHTML = rows.map((p) => {
+        const ok = p.status === "Index";
+        const path = p.url.replace("https://mdsindustrialcorp.com", "") || "/";
+        return `<tr>
+          <td><a href="${esc(p.url)}" target="_blank" rel="noreferrer">${esc(p.title)}</a><div class="path">${esc(path)}</div></td>
+          <td><span class="status ${ok ? "" : "miss"}">${esc(p.status)}</span></td>
+          <td>${esc(p.coverage)}</td>
+          <td>${esc(p.lastmod)}</td>
+        </tr>`;
+      }).join("");
+      document.getElementById("foot").textContent =
+        "Source: " + DATA.source + " · " + DATA.property +
+        " · post-sitemap.xml, page-sitemap.xml, and service-areas-sitemap.xml.";
+    }
+    document.getElementById("q").addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>

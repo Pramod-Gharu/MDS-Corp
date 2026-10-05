@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "python3 .cursor/hooks/session-start.py"
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "python3 .cursor/hooks/isolate-writes.py",
+        "matcher": "Write|StrReplace|Delete|EditNotebook",
+        "failClosed": true
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "python3 .cursor/hooks/isolate-shell.py",
+        "failClosed": true
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "python3 .cursor/hooks/on-task-change.py"
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "python3 .cursor/hooks/on-task-change.py",
+        "matcher": "Write|StrReplace"
+      }
+    ]
+  }
+}

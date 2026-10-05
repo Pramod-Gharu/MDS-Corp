@@ -1,0 +1,11 @@
+---
+description: Keep WordPress login material out of the repo and out of chat
+alwaysApply: true
+---
+
+# Local WordPress connection
+
+- The live site is `https://mdsindustrialcorp.com`.
+- Read credentials only from `.mds/wp.json` (gitignored). Never copy that file into the repo, README, tasks, or chat.
+- Never print `user`, `secret`, Authorization headers, or the file contents.
+- Use `python3 scripts/wp_connect.py status` to verify. Public name and auth ok/fail are enough.

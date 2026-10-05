@@ -1,0 +1,24 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Local per-agent checkouts (never shared)
+.worktrees/
+.mds/
+
+# WordPress runtime (core, uploads, caches)
+wordpress/
+wp-admin/
+wp-includes/
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-config.php
+*.log
+
+# Tooling
+__pycache__/
+*.pyc
+.venv/
+node_modules/

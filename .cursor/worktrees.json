@@ -1,0 +1,8 @@
+{
+  "setup-worktree-unix": "setup-worktree-unix.sh",
+  "setup-worktree": [
+    "mkdir -p .mds",
+    "branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)",
+    "if [ \"${branch#task/}\" != \"$branch\" ]; then echo \"${branch#task/}\" > .mds/current-task; fi"
+  ]
+}

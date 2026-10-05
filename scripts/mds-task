@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""Create, assign, list, and remove isolated WordPress tasks."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from mds_tasklib import (  # noqa: E402
+    add_task,
+    assign_task,
+    find_repo_root,
+    list_task_ids,
+    load_all_tasks,
+    load_task,
+    remove_task,
+    sync_assignments,
+)
+
+
+def cmd_add(args: argparse.Namespace) -> int:
+    root = find_repo_root()
+    task = add_task(
+        root,
+        args.id,
+        args.title or args.id,
+        args.path or [],
+        body=args.body or "",
+    )
+    agent = task["agent"]
+    print(f"Created task '{task['id']}'")
+    print(f"Assigned agent: {agent['agent_id']}")
+    print(f"Branch: {agent['branch']}")
+    print(f"Worktree: {agent['worktree_rel']}")
+    return 0
+
+
+def cmd_assign(args: argparse.Namespace) -> int:
+    root = find_repo_root()
+    task = assign_task(root, args.id, reassign=args.reassign)
+    print(f"Task '{task['id']}' -> {task['agent']['agent_id']}")
+    return 0
+
+
+def cmd_remove(args: argparse.Namespace) -> int:
+    root = find_repo_root()
+    remove_task(root, args.id)
+    print(f"Removed task '{args.id}' and its agent worktree only.")
+    return 0
+
+
+def cmd_list(_: argparse.Namespace) -> int:
+    root = find_repo_root()
+    rows = load_all_tasks(root)
+    if not rows:
+        print("No tasks yet. Add one with: ./scripts/mds-task add <id> --title '...' --path 'theme/file.php'")
+        return 0
+    for task in rows:
+        agent = task.get("agent") or {}
+        print(
+            f"{task['id']}\t{task['status']}\t{agent.get('agent_id') or '-'}\t"
+            f"{agent.get('branch') or '-'}"
+        )
+    return 0
+
+
+def cmd_show(args: argparse.Namespace) -> int:
+    root = find_repo_root()
+    task = load_task(root, args.id)
+    print(json.dumps({k: v for k, v in task.items() if k != "body"}, indent=2))
+    print("\n--- brief ---\n")
+    print(task["body"].rstrip())
+    return 0
+
+
+def cmd_sync(_: argparse.Namespace) -> int:
+    root = find_repo_root()
+    synced = sync_assignments(root)
+    print(f"Synced {len(synced)} task(s).")
+    for task in synced:
+        agent = task.get("agent") or {}
+        print(f"- {task['id']}: {agent.get('agent_id')}")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Manage isolated MDS-Corp WordPress tasks and agents."
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    add_p = sub.add_parser("add", help="Create a task and auto-assign a dedicated agent")
+    add_p.add_argument("id", help="Task id, for example home-page")
+    add_p.add_argument("--title", help="Human title")
+    add_p.add_argument(
+        "--path",
+        action="append",
+        help="Exclusive allowed path or glob. Repeat for multiple paths.",
+    )
+    add_p.add_argument("--body", help="Optional markdown brief")
+    add_p.set_defaults(func=cmd_add)
+
+    assign_p = sub.add_parser("assign", help="Assign or refresh the agent for an existing task")
+    assign_p.add_argument("id")
+    assign_p.add_argument(
+        "--reassign",
+        action="store_true",
+        help="Mint a new agent id without touching other tasks",
+    )
+    assign_p.set_defaults(func=cmd_assign)
+
+    remove_p = sub.add_parser("remove", help="Delete one task and only that agent worktree")
+    remove_p.add_argument("id")
+    remove_p.set_defaults(func=cmd_remove)
+
+    list_p = sub.add_parser("list", help="List tasks and assigned agents")
+    list_p.set_defaults(func=cmd_list)
+
+    show_p = sub.add_parser("show", help="Show one task")
+    show_p.add_argument("id")
+    show_p.set_defaults(func=cmd_show)
+
+    sync_p = sub.add_parser("sync", help="Auto-assign agents for every task folder")
+    sync_p.set_defaults(func=cmd_sync)
+
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+    try:
+        return args.func(args)
+    except Exception as exc:  # noqa: BLE001
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
