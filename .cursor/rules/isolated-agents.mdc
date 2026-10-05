@@ -1,0 +1,32 @@
+---
+description: One isolated agent per task; adding or removing a task must not touch other agents
+alwaysApply: true
+---
+
+# Isolated task agents
+
+This repo runs **one agent per task**. Tasks live in `tasks/<id>/`. Each task owns exclusive `allowed_paths`.
+
+## Orchestrator (main checkout)
+
+If `MDS_TASK_ID` is not set, you are the orchestrator.
+
+- When the user adds work, create a new task with `./scripts/mds-task add <id> --title '...' --path 'exclusive/path' --body '...'`.
+- That command assigns a dedicated agent, branch `task/<id>`, and worktree `.worktrees/<id>/`.
+- Launch a worker only inside that worktree. Do not implement WordPress, theme, plugin, or page work in the main checkout.
+- Never edit one task’s files while servicing another.
+- Overlapping `allowed_paths` are forbidden. If two tasks need the same file, stop and split ownership.
+
+## Worker
+
+If `MDS_TASK_ID` is set, you are that worker.
+
+- Edit only `tasks/<id>/` plus that task’s `allowed_paths`.
+- Do not edit other task folders, `.cursor/`, `scripts/`, or `.git/`.
+- Do not copy other agents’ plans. Do not expand scope.
+
+## Add / remove
+
+- Add: `./scripts/mds-task add <id> --title '...' --path 'file-or-glob'`
+- Remove: `./scripts/mds-task remove <id>` — deletes only that task folder, branch, and worktree.
+- Removing or reassigning one task must not change other task folders, branches, or worktrees.
